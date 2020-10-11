@@ -1,28 +1,33 @@
-import { LandOwnershipRepository, LandOwnershipService } from "../interfaces";
-import { LandOwnershipRecord } from "../land-ownership/land-ownership-record";
+import { injectable, inject } from 'inversify'
+import { LandOwnershipTreeLoader, LandOwnershipService } from '../interfaces'
+import { LandOwnershipRecord } from '../land-ownership/land-ownership-record'
+import { TYPES } from '../types'
 
+@injectable()
 export class CorporateLandOwnershipService implements LandOwnershipService {
 
-    private _landOwnershipRepository: LandOwnershipRepository
+    private _landOwnershipTreeLoader: LandOwnershipTreeLoader
 
-    constructor(landOwnershipRespository: LandOwnershipRepository) {
-        this._landOwnershipRepository = landOwnershipRespository
+    constructor(
+        @inject(TYPES.LandOwnershipTreeLoader) landOwnershipTreeLoader: LandOwnershipTreeLoader
+    ) {
+        this._landOwnershipTreeLoader = landOwnershipTreeLoader
     }
 
-    async findById(id: string): Promise<LandOwnershipRecord | null> {
+    async findRecordById(id: string): Promise<LandOwnershipRecord | null> {
         const {
-            _landOwnershipRepository
+            _landOwnershipTreeLoader
         } = this
 
         try {
-            const landOwnershipTree = await _landOwnershipRepository.loadTree()
+            const landOwnershipTree = await _landOwnershipTreeLoader.load()
 
             if(!landOwnershipTree) {
                 console.error('Unable to load land ownership tree')
                 return null
             }
 
-            return landOwnershipTree.traverseToCompanyRecord(id)
+            return landOwnershipTree.getRecord(id)
         } catch(error) {
             console.error(error)
             return null

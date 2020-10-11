@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { CommandParser } from '../interfaces/command-parser'
+import { CommandParser } from '../interfaces'
 
 @injectable()
 export class CliCommandParser implements CommandParser {
