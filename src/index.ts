@@ -5,10 +5,7 @@ import 'reflect-metadata'
 
 const userInterface = container.get<UserInterface>(TYPES.UserInterface)
 
-userInterface.processInputCommand(process.argv)
-    .then(() => {
-
-    })
-    .catch((error) => {
-
+userInterface.processInputCommands(process.argv)
+    .catch((error: Error) => {
+        console.error(error)
     })

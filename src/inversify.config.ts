@@ -1,5 +1,5 @@
 import { Container } from 'inversify'
-import Cli from './cli'
+import { Cli } from './cli'
 import { UserInterface } from './interfaces'
 import { TYPES } from './types'
 

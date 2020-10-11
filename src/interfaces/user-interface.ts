@@ -1,3 +1,3 @@
 export interface UserInterface {
-    processInputCommand(commands: string[]): Promise<void>
+    processInputCommands(commands: string[]): Promise<void>
 }
