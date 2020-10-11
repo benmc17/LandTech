@@ -3,7 +3,7 @@ import 'mocha'
 import { IMock, It, Mock, Times } from 'typemoq'
 import { Cli } from '../../src/cli/cli'
 import { LandOwnershipService, ResponsePrinter } from '../../src/interfaces'
-import { CommandParser } from '../../src/interfaces/command-parser'
+import { CommandParser } from '../../src/interfaces'
 import { LandOwnershipRecord } from '../../src/land-ownership'
 
 describe('The CLI should', () => {
@@ -38,7 +38,7 @@ describe('The CLI should', () => {
 
     beforeEach(() => {
         mockLandOwnershipService = Mock.ofType<LandOwnershipService>(class MockLandOwnershipService {
-            async findById(): Promise<LandOwnershipRecord> { return {} as any }
+            async findRecordById(): Promise<LandOwnershipRecord> { return {} as any }
         })
 
         mockResponsePrinter = Mock.ofType<ResponsePrinter>(class MockResponsePrinter {
@@ -62,14 +62,14 @@ describe('The CLI should', () => {
     validCompanyIds.forEach(companyId => { 
         it(`accept a valid company id as an input parameter: ${companyId}`, async () => {
             const inputCommands = ['test']
-            const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord()
+            const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord('R12345', 'Test Company')
 
             mockCommandParser
                 .setup((m: CommandParser) => m.parse(inputCommands))
                 .returns(() => ({ command: companyId, options: {} }))
 
             mockLandOwnershipService
-                .setup((m: LandOwnershipService) => m.findById(companyId))
+                .setup((m: LandOwnershipService) => m.findRecordById(companyId))
                 .returns(() => Promise.resolve(responseRecord))
                 .verifiable()
 
@@ -88,7 +88,7 @@ describe('The CLI should', () => {
                 .returns(() => ({ command: companyId, options: {} }))
 
             mockLandOwnershipService
-                .setup((m: LandOwnershipService) => m.findById(companyId))
+                .setup((m: LandOwnershipService) => m.findRecordById(companyId))
                 .verifiable(Times.never())
 
             await subjectOfTest.processInputCommands(inputCommands)
@@ -99,14 +99,14 @@ describe('The CLI should', () => {
 
     it('output the land ownership record to the screen', async () => {
         const inputCommands = ['test']
-        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord()
+        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord('R12345', 'Test Company')
 
         mockCommandParser
             .setup((m: CommandParser) => m.parse(inputCommands))
             .returns(() => ({ command: 'C12345', options: {} }))
 
         mockLandOwnershipService
-            .setup((m: LandOwnershipService) => m.findById(It.isAnyString()))
+            .setup((m: LandOwnershipService) => m.findRecordById(It.isAnyString()))
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter
@@ -144,7 +144,7 @@ describe('The CLI should', () => {
             .returns(() => ({ command: companyId, options: {} }))
 
         mockLandOwnershipService
-            .setup((m: LandOwnershipService) => m.findById(It.isAnyString()))
+            .setup((m: LandOwnershipService) => m.findRecordById(It.isAnyString()))
             .returns(() => Promise.resolve(null))
 
         mockResponsePrinter
@@ -176,14 +176,14 @@ describe('The CLI should', () => {
 
     it('output the land ownership record to the screen: mode => from_root', async () => {
         const inputCommands = ['test']
-        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord()
+        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord('R12345', 'Test Company')
 
         mockCommandParser
             .setup((m: CommandParser) => m.parse(inputCommands))
             .returns(() => ({ command: 'C12345', options: { mode: 'from_root' } }))
 
         mockLandOwnershipService
-            .setup((m: LandOwnershipService) => m.findById(It.isAnyString()))
+            .setup((m: LandOwnershipService) => m.findRecordById(It.isAnyString()))
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter
@@ -197,14 +197,14 @@ describe('The CLI should', () => {
 
     it('output the land ownership record to the screen: mode => expand', async () => {
         const inputCommands = ['test']
-        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord()
+        const responseRecord: LandOwnershipRecord | null = new LandOwnershipRecord('R12345', 'Test Company')
 
         mockCommandParser
             .setup((m: CommandParser) => m.parse(inputCommands))
             .returns(() => ({ command: 'C12345', options: { mode: 'expand' } }))
 
         mockLandOwnershipService
-            .setup((m: LandOwnershipService) => m.findById(It.isAnyString()))
+            .setup((m: LandOwnershipService) => m.findRecordById(It.isAnyString()))
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter

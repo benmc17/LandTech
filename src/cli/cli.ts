@@ -1,8 +1,7 @@
 import { injectable, inject } from 'inversify'
-import { LandOwnershipService, ResponsePrinter, UserInterface } from '../interfaces'
+import { CommandParser, LandOwnershipService, ResponsePrinter, UserInterface } from '../interfaces'
 import 'reflect-metadata'
 import { LandOwnershipRecord } from '../land-ownership'
-import { CommandParser } from '../interfaces/command-parser'
 import { TYPES } from '../types'
 
 export const Mode = {
@@ -98,7 +97,7 @@ export class Cli implements UserInterface {
             return
         }
 
-        const landOwnershipRecord = await _landOwnershipService.findById(companyId)
+        const landOwnershipRecord = await _landOwnershipService.findRecordById(companyId)
 
         if(!landOwnershipRecord) {
             _cliResponsePrinter.printError(`Unable to find land ownership record for company with id: ${companyId}`)
