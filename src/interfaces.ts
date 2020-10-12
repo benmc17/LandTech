@@ -1,4 +1,4 @@
-import { LandOwnershipRecord, LandOwnershipTrees } from './land-ownership'
+import { LandOwnershipRecord, LandOwnershipData } from './land-ownership'
 
 export interface CommandParser {
     parse(inputStrings: string[]): { command: string, options: { [option: string]: string } }
@@ -12,8 +12,8 @@ export interface LandOwnershipService {
     findRecordById(id: string): Promise<LandOwnershipRecord | null>
 }
 
-export interface LandOwnershipTreeLoader {
-    load(): Promise<LandOwnershipTrees | null>
+export interface LandOwnershipDataLoader {
+    load(): Promise<LandOwnershipData | null>
 }
 
 export interface ResponsePrinter {
@@ -23,7 +23,7 @@ export interface ResponsePrinter {
     printError(errorMessage: string): void
 }
 
-export interface TreeFactory<T> {
+export interface DataFactory<T> {
     create(): T
 }
 

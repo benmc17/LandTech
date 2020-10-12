@@ -1,6 +1,6 @@
 import { LandOwnershipRecord } from '.'
 
-export class LandOwnershipTrees {
+export class LandOwnershipData {
 
     private _companyRelationshipTrees: { [companyId: string]: LandOwnershipRecord }
 
@@ -21,9 +21,9 @@ export class LandOwnershipTrees {
         return this._companyRelationshipTrees[companyId] || null
     }
 
-    addRecord(child: LandOwnershipRecord, parentId: string): boolean {
+    addRecord(child: LandOwnershipRecord, parentId?: string): boolean {
         const {
-            _companyRelationshipTrees,
+            _companyRelationshipTrees: _companyRelationshipTrees,
             _addToTree,
             _addToOrphanedList,
             _checkOrphanedListForSubCompanies

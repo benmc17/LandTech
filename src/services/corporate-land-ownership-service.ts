@@ -1,33 +1,34 @@
 import { injectable, inject } from 'inversify'
-import { LandOwnershipTreeLoader, LandOwnershipService } from '../interfaces'
+import { LandOwnershipDataLoader, LandOwnershipService } from '../interfaces'
 import { LandOwnershipRecord } from '../land-ownership/land-ownership-record'
 import { TYPES } from '../types'
+import 'reflect-metadata'
 
 @injectable()
 export class CorporateLandOwnershipService implements LandOwnershipService {
 
-    private _landOwnershipTreeLoader: LandOwnershipTreeLoader
+    private _landOwnershipDataLoader: LandOwnershipDataLoader
 
     constructor(
-        @inject(TYPES.LandOwnershipTreeLoader) landOwnershipTreeLoader: LandOwnershipTreeLoader
+        @inject(TYPES.LandOwnershipDataLoader) landOwnershipDataLoader: LandOwnershipDataLoader
     ) {
-        this._landOwnershipTreeLoader = landOwnershipTreeLoader
+        this._landOwnershipDataLoader = landOwnershipDataLoader
     }
 
     async findRecordById(id: string): Promise<LandOwnershipRecord | null> {
         const {
-            _landOwnershipTreeLoader
+            _landOwnershipDataLoader
         } = this
 
         try {
-            const landOwnershipTree = await _landOwnershipTreeLoader.load()
+            const landOwnershipData = await _landOwnershipDataLoader.load()
 
-            if(!landOwnershipTree) {
-                console.error('Unable to load land ownership tree')
+            if(!landOwnershipData) {
+                console.error('Unable to load land ownership data')
                 return null
             }
 
-            return landOwnershipTree.getRecord(id)
+            return landOwnershipData.getRecord(id)
         } catch(error) {
             console.error(error)
             return null

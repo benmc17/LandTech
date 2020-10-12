@@ -1,11 +1,12 @@
 import { injectable, inject } from 'inversify'
-import { CsvReader, LandOwnershipTreeLoader, TreeFactory } from '../interfaces'
+import { CsvReader, LandOwnershipDataLoader, DataFactory } from '../interfaces'
 import { TYPES } from '../types'
 import { LandOwnershipRecord } from './land-ownership-record'
-import { LandOwnershipTrees } from './land-ownership-trees'
+import { LandOwnershipData } from './land-ownership-data'
+import 'reflect-metadata'
 
 @injectable()
-export class CsvLandOwnershipTreeLoader implements LandOwnershipTreeLoader {
+export class LandOwnershipCsvDataLoader implements LandOwnershipDataLoader {
 
     private static readonly CompanyRelationsCsvFile = './data/company_relations.csv'
 
@@ -13,36 +14,36 @@ export class CsvLandOwnershipTreeLoader implements LandOwnershipTreeLoader {
 
     private _csvReader: CsvReader
 
-    private _treeFactory: TreeFactory<LandOwnershipTrees>
+    private _dataFactory: DataFactory<LandOwnershipData>
 
     constructor(
         @inject(TYPES.CsvReader) csvReader: CsvReader,
-        @inject(TYPES.TreeFactory) treeFactory: TreeFactory<LandOwnershipTrees>
+        @inject(TYPES.DataFactory) dataFactory: DataFactory<LandOwnershipData>
     ) {
         this._csvReader = csvReader
-        this._treeFactory = treeFactory
+        this._dataFactory = dataFactory
 
         this._readLandOwnership = this._readLandOwnership.bind(this)
-        this._readCompanyRelationsAndBuildTree = this._readCompanyRelationsAndBuildTree.bind(this)
+        this._readCompanyRelationsAndBuildTrees = this._readCompanyRelationsAndBuildTrees.bind(this)
     }
 
-    async load(): Promise<LandOwnershipTrees | null> {
+    async load(): Promise<LandOwnershipData | null> {
         const {
             _readLandOwnership,
-            _readCompanyRelationsAndBuildTree
+            _readCompanyRelationsAndBuildTrees
         } = this
 
         const landOwnership = await _readLandOwnership()
-        const tree = await _readCompanyRelationsAndBuildTree(landOwnership)
+        const landOwnershipTrees = await _readCompanyRelationsAndBuildTrees(landOwnership)
 
-        return tree
+        return landOwnershipTrees
     }
 
     private async _readLandOwnership(): Promise<{ [companyId: string]: string[] }> {
         const landOwnership: { [companyId: string]: string[] } = {}
 
         await this._csvReader.read(
-            CsvLandOwnershipTreeLoader.LandOwnershipCsvFile,
+            LandOwnershipCsvDataLoader.LandOwnershipCsvFile,
             (row: { [column: string]: string } ): void => {
                 const companyId = row.company_id
                 const landId = row.land_id
@@ -60,23 +61,23 @@ export class CsvLandOwnershipTreeLoader implements LandOwnershipTreeLoader {
         return landOwnership
     }
 
-    private async _readCompanyRelationsAndBuildTree(landOwnership: { [companyId: string]: string[] }): Promise<LandOwnershipTrees> {
+    private async _readCompanyRelationsAndBuildTrees(landOwnership: { [companyId: string]: string[] }): Promise<LandOwnershipData> {
         const {
-            _treeFactory,
+            _dataFactory,
             _csvReader
         } = this
 
-        const tree = _treeFactory.create()
+        const landOwnershipTrees = _dataFactory.create()
         
         await _csvReader.read(
-            CsvLandOwnershipTreeLoader.CompanyRelationsCsvFile,
+            LandOwnershipCsvDataLoader.CompanyRelationsCsvFile,
             (row: { [column: string]: string } ): void => {
                 const landParcels = landOwnership[row.company_id]
                 const record = new LandOwnershipRecord(row.company_id, row.name, landParcels)
-                tree.addRecord(record, row.parent)
+                landOwnershipTrees.addRecord(record, row.parent)
             }
         )
 
-        return tree
+        return landOwnershipTrees
     }
 }

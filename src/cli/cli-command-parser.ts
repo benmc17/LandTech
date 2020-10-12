@@ -1,10 +1,14 @@
 import { injectable } from 'inversify'
 import { CommandParser } from '../interfaces'
+import 'reflect-metadata'
 
 @injectable()
 export class CliCommandParser implements CommandParser {
-
     parse(inputStrings: string[]): { command: string; options: { [option: string]: string; }; } {
+        if(inputStrings.length <= 2) return {
+            command: '', options: {}
+        }
+
         const command = inputStrings[inputStrings.length - 1]
         const options: { [option: string]: string } = {}
         let currentOption
