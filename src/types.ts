@@ -3,7 +3,7 @@ export const TYPES = {
     LandOwnershipService: Symbol.for('LandOwnershipService'),
     ResponsePrinter: Symbol.for('ResponsePrinter'),
     CommandParser: Symbol.for('CommandParser'),
-    LandOwnershipTreeLoader: Symbol.for('LandOwnershipTreeLoader'),
-    TreeFactory: Symbol.for('TreeFactory'),
+    LandOwnershipDataLoader: Symbol.for('LandOwnershipDataLoader'),
+    DataFactory: Symbol.for('DataFactory'),
     CsvReader: Symbol.for('CsvReader')
 }

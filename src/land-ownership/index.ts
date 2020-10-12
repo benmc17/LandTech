@@ -1,4 +1,4 @@
-export * from './land-ownership-trees'
+export * from './land-ownership-data'
 export * from './land-ownership-record'
-export * from './csv-land-ownership-tree-loader'
-export * from './land-ownership-trees-factory'
+export * from './land-ownership-csv-data-loader'
+export * from './land-ownership-data-factory'

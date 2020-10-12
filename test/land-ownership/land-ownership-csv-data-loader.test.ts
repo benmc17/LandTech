@@ -1,30 +1,30 @@
-/* eslint @typescript-eslint/no-empty-function: "off", @typescript-eslint/no-explicit-any: "off" */
+/* eslint @typescript-eslint/no-empty-function: "off", @typescript-eslint/no-explicit-any: "off", @typescript-eslint/no-unused-vars: "off" */
 import 'mocha'
 import { IMock, It, Mock } from 'typemoq'
-import { CsvReader, TreeFactory } from '../../src/interfaces'
-import { CsvLandOwnershipTreeLoader, LandOwnershipRecord, LandOwnershipTrees } from '../../src/land-ownership'
+import { CsvReader, DataFactory } from '../../src/interfaces'
+import { LandOwnershipCsvDataLoader, LandOwnershipRecord, LandOwnershipData } from '../../src/land-ownership'
 import { expect } from 'chai'
 
-describe('The CSV Land Ownership Tree Loader should', () => {
+describe('The Land Ownership CSV Data Loader should', () => {
 
-    let subjectOfTest: CsvLandOwnershipTreeLoader
+    let subjectOfTest: LandOwnershipCsvDataLoader
 
     let mockCsvReader: IMock<CsvReader>
 
-    let mockTreeFactory: IMock<TreeFactory<LandOwnershipTrees>>
+    let mockDataFactory: IMock<DataFactory<LandOwnershipData>>
 
-    let mockLandOwnershipTrees: IMock<LandOwnershipTrees>
+    let mockLandOwnershipData: IMock<LandOwnershipData>
 
     beforeEach(() => {
         mockCsvReader = Mock.ofType<CsvReader>(class MockCsvReader {
             async read(): Promise<void> { return }
         })
-        mockTreeFactory = Mock.ofType<TreeFactory<LandOwnershipTrees>>(class MockTreeFactory {
-            create(): LandOwnershipTrees { return {} as any }
+        mockDataFactory = Mock.ofType<DataFactory<LandOwnershipData>>(class MockTreeFactory {
+            create(): LandOwnershipData { return {} as any }
         })
-        mockLandOwnershipTrees = Mock.ofType<LandOwnershipTrees>(LandOwnershipTrees)
+        mockLandOwnershipData = Mock.ofType<LandOwnershipData>(LandOwnershipData)
 
-        subjectOfTest = new CsvLandOwnershipTreeLoader(mockCsvReader.object, mockTreeFactory.object)
+        subjectOfTest = new LandOwnershipCsvDataLoader(mockCsvReader.object, mockDataFactory.object)
     })
 
     it('use data from the company_relations CSV file to build company relations trees', async () => {
@@ -39,9 +39,9 @@ describe('The CSV Land Ownership Tree Loader should', () => {
             company_id: 'R987688'
         }
 
-        mockTreeFactory
-            .setup((m: TreeFactory<LandOwnershipTrees>) => m.create())
-            .returns(() => mockLandOwnershipTrees.object)
+        mockDataFactory
+            .setup((m: DataFactory<LandOwnershipData>) => m.create())
+            .returns(() => mockLandOwnershipData.object)
             .verifiable()
         
         mockCsvReader
@@ -57,15 +57,15 @@ describe('The CSV Land Ownership Tree Loader should', () => {
                 processRow(landOwnershipRow1)
             })
 
-        mockLandOwnershipTrees
-            .setup((m: LandOwnershipTrees) => m.addRecord(It.isAny(), It.isAny()))
+        mockLandOwnershipData
+            .setup((m: LandOwnershipData) => m.addRecord(It.isAny(), It.isAny()))
             .returns(() => true)
         
         const tree = await subjectOfTest.load()
 
         expect(tree).to.not.be.null
 
-        mockTreeFactory.verifyAll()
+        mockDataFactory.verifyAll()
         mockCsvReader.verifyAll()
     })
 
@@ -95,9 +95,9 @@ describe('The CSV Land Ownership Tree Loader should', () => {
         }
         const actualRecords: { [companyId: string]: LandOwnershipRecord } = {}
 
-        mockTreeFactory
-            .setup((m: TreeFactory<LandOwnershipTrees>) => m.create())
-            .returns(() => mockLandOwnershipTrees.object)
+        mockDataFactory
+            .setup((m: DataFactory<LandOwnershipData>) => m.create())
+            .returns(() => mockLandOwnershipData.object)
         
         mockCsvReader
             .setup((m: CsvReader) => m.read('./data/company_relations.csv', It.isAny()))
@@ -114,8 +114,8 @@ describe('The CSV Land Ownership Tree Loader should', () => {
                 processRow(landOwnershipRow2)
             })
 
-        mockLandOwnershipTrees
-            .setup((m: LandOwnershipTrees) => m.addRecord(It.isAny(), It.isAny()))
+        mockLandOwnershipData
+            .setup((m: LandOwnershipData) => m.addRecord(It.isAny(), It.isAny()))
             .callback((record: LandOwnershipRecord, _?: string) => {
                 actualRecords[record.getId()] = record
             })
@@ -161,9 +161,9 @@ describe('The CSV Land Ownership Tree Loader should', () => {
 
         const actualRecords: LandOwnershipRecord[] = []
 
-        mockTreeFactory
-            .setup((m: TreeFactory<LandOwnershipTrees>) => m.create())
-            .returns(() => mockLandOwnershipTrees.object)
+        mockDataFactory
+            .setup((m: DataFactory<LandOwnershipData>) => m.create())
+            .returns(() => mockLandOwnershipData.object)
         
         mockCsvReader
             .setup((m: CsvReader) => m.read('./data/company_relations.csv', It.isAny()))
@@ -179,8 +179,8 @@ describe('The CSV Land Ownership Tree Loader should', () => {
             })
             .verifiable()
 
-        mockLandOwnershipTrees
-            .setup((m: LandOwnershipTrees) => m.addRecord(It.isAny(), It.isAny()))
+        mockLandOwnershipData
+            .setup((m: LandOwnershipData) => m.addRecord(It.isAny(), It.isAny()))
             .callback((record: LandOwnershipRecord, _?: string) => {
                 actualRecords.push(record)
             })
