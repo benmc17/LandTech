@@ -24,7 +24,11 @@ export class CliResponsePrinter implements ResponsePrinter {
     }
 
     printHelp(): void {
-        console.log('HELP GOES HERE')
+        console.log('Usage:')
+        console.log('\tlandtree <company id> (the mode will default to from_root)')
+        console.log('\tlandtree --mode from_root <company id>')
+        console.log('\tlandtree --mode expand <company id>')
+        console.log('\tlandtree help')
     }
 
     printError(errorMessage: string): void {
