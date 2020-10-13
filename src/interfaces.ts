@@ -17,8 +17,7 @@ export interface LandOwnershipDataLoader {
 }
 
 export interface ResponsePrinter {
-    printLandOwnershipRecordToRoot(landOwnershipRecord: LandOwnershipRecord): void
-    printExpandedLandOwnershipRecord(landOwnershipRecord: LandOwnershipRecord): void
+    printLandOwnershipRecord(landOwnershipRecord: LandOwnershipRecord, level: number): void
     printHelp(): void
     printError(errorMessage: string): void
 }
