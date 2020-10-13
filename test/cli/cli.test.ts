@@ -42,8 +42,7 @@ describe('The CLI should', () => {
         })
 
         mockResponsePrinter = Mock.ofType<ResponsePrinter>(class MockResponsePrinter {
-            printLandOwnershipRecordToRoot(): void {}
-            printExpandedLandOwnershipRecord(): void {}
+            printLandOwnershipRecord(): void {}
             printHelp(): void {}
             printError(): void {}
         })
@@ -110,7 +109,7 @@ describe('The CLI should', () => {
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter
-            .setup((m: ResponsePrinter) => m.printLandOwnershipRecordToRoot(responseRecord))
+            .setup((m: ResponsePrinter) => m.printLandOwnershipRecord(responseRecord, 0))
             .verifiable()
 
         await subjectOfTest.processInputCommands(inputCommands)
@@ -187,7 +186,7 @@ describe('The CLI should', () => {
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter
-            .setup((m: ResponsePrinter) => m.printLandOwnershipRecordToRoot(responseRecord))
+            .setup((m: ResponsePrinter) => m.printLandOwnershipRecord(responseRecord, 0))
             .verifiable()
 
         await subjectOfTest.processInputCommands(inputCommands)
@@ -208,7 +207,7 @@ describe('The CLI should', () => {
             .returns(() => Promise.resolve(responseRecord))
 
         mockResponsePrinter
-            .setup((m: ResponsePrinter) => m.printExpandedLandOwnershipRecord(responseRecord))
+            .setup((m: ResponsePrinter) => m.printLandOwnershipRecord(responseRecord, 0))
             .verifiable()
 
         await subjectOfTest.processInputCommands(inputCommands)
