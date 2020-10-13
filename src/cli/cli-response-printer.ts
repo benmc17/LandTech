@@ -16,11 +16,11 @@ export class CliResponsePrinter implements ResponsePrinter {
     }
 
     printLandOwnershipRecordToRoot(landOwnershipRecord: LandOwnershipRecord): void {
-        landOwnershipRecord.processRecordsFromRoot(this._processRecord)
+        landOwnershipRecord.processFromRoot(this._processRecord)
     }
 
     printExpandedLandOwnershipRecord(landOwnershipRecord: LandOwnershipRecord): void {
-        landOwnershipRecord.expandRecords(this._processRecord)
+        landOwnershipRecord.expand(this._processRecord)
     }
 
     printHelp(): void {

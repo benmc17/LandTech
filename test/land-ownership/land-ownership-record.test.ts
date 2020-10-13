@@ -25,7 +25,7 @@ describe('The Land Ownership Record should', () => {
 
         const stack: LandOwnershipRecord[] = []
 
-        subject.processRecordsFromRoot((node: LandOwnershipRecord) => {
+        subject.processFromRoot((node: LandOwnershipRecord) => {
             stack.push(node)
         })
 
@@ -62,7 +62,7 @@ describe('The Land Ownership Record should', () => {
 
         const stack: LandOwnershipRecord[] = []
 
-        subject.processRecordsFromRoot((node: LandOwnershipRecord) => {
+        subject.processFromRoot((node: LandOwnershipRecord) => {
             stack.push(node)
         })
 
@@ -79,7 +79,7 @@ describe('The Land Ownership Record should', () => {
 
         const stack: LandOwnershipRecord[] = []
 
-        subject.processRecordsFromRoot((node: LandOwnershipRecord) => {
+        subject.processFromRoot((node: LandOwnershipRecord) => {
             stack.push(node)
         })
 
@@ -112,7 +112,7 @@ describe('The Land Ownership Record should', () => {
 
         const stack: LandOwnershipRecord[] = []
 
-        subject.expandRecords((node: LandOwnershipRecord) => {
+        subject.expand((node: LandOwnershipRecord) => {
             stack.push(node)
         })
 
