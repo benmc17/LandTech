@@ -36,7 +36,7 @@ export class Cli implements UserInterface {
         this._processCommand = this._processCommand.bind(this)
         this._processHelpCommand = this._processHelpCommand.bind(this)
         this._processCompanyId = this._processCompanyId.bind(this)
-        this._outputResult = this._outputResult.bind(this)
+        this._performAction = this._performAction.bind(this)
         this._isValidCompanyId = this._isValidCompanyId.bind(this)
         this._isValidMode = this._isValidMode.bind(this)
     }
@@ -84,7 +84,7 @@ export class Cli implements UserInterface {
             _cliResponsePrinter,
             _isValidCompanyId,
             _isValidMode,
-            _outputResult
+            _performAction
         } = this
 
         if(!_isValidCompanyId(companyId)) {
@@ -104,20 +104,20 @@ export class Cli implements UserInterface {
             return
         }
 
-        _outputResult(landOwnershipRecord, mode)
+        _performAction(landOwnershipRecord, mode)
     }
 
-    private _outputResult(landOwnershipRecord: LandOwnershipRecord, mode: string) {
+    private _performAction(landOwnershipRecord: LandOwnershipRecord, mode: string) {
         const {
             _cliResponsePrinter
         } = this
         
         switch(mode) {
             case Mode.FROM_ROOT:
-                _cliResponsePrinter.printLandOwnershipRecordToRoot(landOwnershipRecord)
+                landOwnershipRecord.processFromRoot(_cliResponsePrinter.printLandOwnershipRecord)
                 break
             case Mode.EXPAND:
-                _cliResponsePrinter.printExpandedLandOwnershipRecord(landOwnershipRecord)
+                landOwnershipRecord.expand(_cliResponsePrinter.printLandOwnershipRecord)
                 break
         }
     }
