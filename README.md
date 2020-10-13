@@ -1,6 +1,18 @@
 # Corporate Land Ownership Tool
 
 ## Contents
+- [Description](#description)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Build and Test](#build-and-test)
+- [Example](#example)
+- [Design](#design)
+- [Further Development](#further-development)
+  * [Data](#data)
+  * [User Interface](#user-interface)
+  * [Authentication/Authorisation](#authentication/authorisation)
+  * [DevOps](#devops)
+- [Code Coverage](#code-coverage)
 
 ## Description
 The purpose of this tool is to provide a means of displaying complex corporate land ownership heirarchies. It has been developed with TypeScript/Node.js using a top-down TDD approach.
@@ -102,3 +114,16 @@ Currently there is no authentication/authorisation mechanism. This would probabl
 
 ### DevOps
 For deployment to production a CI/CD build and release pipeline would need to be built to enable easy deployment and automated testing through the stages (dev, test, uat, live, etc..) and also to ensure predictable deployments for every code change. This could be achieved using a cloud provider such as Azure DevOps or using a self managed solution by running a Jenkins server (or similiar).
+
+## Code Coverage
+A code coverage report can be generate using NYC by executing the command ```npm run coverage```
+
+The following is the latest coverage report:
+```
+=============================== Coverage summary ===============================
+Statements   : 92.53% ( 285/308 )
+Branches     : 81.82% ( 45/55 )
+Functions    : 86.27% ( 44/51 )
+Lines        : 92.53% ( 260/281 )
+================================================================================
+```
