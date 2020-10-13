@@ -16,6 +16,8 @@ export class LandOwnershipRecord {
         this._landParcels = landParcels || []
         this._subCompanies = []
 
+        this.processFromRoot = this.processFromRoot.bind(this)
+        this.expand = this.expand.bind(this)
         this.getId = this.getId.bind(this)
         this.getName = this.getName.bind(this)
         this.getLandParcels = this.getLandParcels.bind(this)
@@ -23,29 +25,24 @@ export class LandOwnershipRecord {
         this.addSubCompany = this.addSubCompany.bind(this)
         this.setParent = this.setParent.bind(this)
         this.getParent = this.getParent.bind(this)
-        this._queueNodesToRoot = this._queueNodesToRoot.bind(this)
-        this._queueChildNodes = this._queueChildNodes.bind(this)
+        this._processChildNodes = this._processChildNodes.bind(this)
         this._traceNodesToRoot = this._traceNodesToRoot.bind(this)
+        this._expandNode = this._expandNode.bind(this)
     }
 
-    processRecordsFromRoot(processNode: (node: LandOwnershipRecord, level: number) => void): void {
-        const pathToRoot = this._queueNodesToRoot()
-        let node = pathToRoot.shift()
+    processFromRoot(forEachNode: (node: LandOwnershipRecord, level: number) => void): void {
+        const stack = this._traceNodesToRoot()
+        const root = stack.pop()
 
-        while(node) {
-            processNode(node.record, node.level)
-            node = pathToRoot.shift()
+        if(root) {
+            forEachNode(root, 0)
+            this._processChildNodes(forEachNode, root, stack, 1)
         }
     }
 
-    expandRecords(processNode: (node: LandOwnershipRecord, level: number) => void): void {
-        const pathToRoot = this._queueExpandedNodes()
-        let node = pathToRoot.shift()
-
-        while(node) {
-            processNode(node.record, node.level)
-            node = pathToRoot.shift()
-        }
+    expand(forEachNode: (node: LandOwnershipRecord, level: number) => void): void {
+        forEachNode(this, 0)
+        this._expandNode(forEachNode, this, 1)
     }
 
     getId(): string {
@@ -76,26 +73,7 @@ export class LandOwnershipRecord {
         return this._parent
     }
 
-    private _queueNodesToRoot(): { record: LandOwnershipRecord, level: number }[] {
-        const stack = this._traceNodesToRoot()
-
-        const queue: { record: LandOwnershipRecord, level: number }[] = []
-
-        const root = stack.pop()
-
-        if(root) {
-            queue.push({
-                record: root,
-                level: 0
-            })
-
-            this._queueChildNodes(root, stack, queue, 1)
-        }
-
-        return queue
-    }
-
-    private _queueChildNodes(parent: LandOwnershipRecord, stack: LandOwnershipRecord[], queue: { record: LandOwnershipRecord, level: number }[], level: number) {
+    private _processChildNodes(forEachNode: (node: LandOwnershipRecord, level: number) => void, parent: LandOwnershipRecord, stack: LandOwnershipRecord[], level: number) {
         const child = stack.pop()
 
         if(!child) return
@@ -105,13 +83,10 @@ export class LandOwnershipRecord {
         for(let i = 0; i < subCompanies.length; i++) {
             const node = subCompanies[i]
 
-            queue.push({
-                record: node,
-                level
-            })
+            forEachNode(node, level)
 
             if(node == child) {
-                this._queueChildNodes(node, stack, queue, level+1)
+                this._processChildNodes(forEachNode, node, stack, level+1)
             }
         }
     }
@@ -129,31 +104,13 @@ export class LandOwnershipRecord {
         return stack
     }
 
-    private _queueExpandedNodes() {
-        const queue: { record: LandOwnershipRecord, level: number }[] = []
-
-        queue.push({ 
-            record: this, 
-            level: 0 
-        })
-
-        this._expandNode(this, queue, 1)
-
-        return queue
-    }
-
-    private _expandNode(node: LandOwnershipRecord, queue: { record: LandOwnershipRecord, level: number }[], level: number) {
+    private _expandNode(forEachNode: (node: LandOwnershipRecord, level: number) => void, node: LandOwnershipRecord, level: number) {
         const childNodes = node.getSubCompanies()
         
         for(let i = 0; i < childNodes.length; i++) {
             const child = childNodes[i]
-
-            queue.push({ 
-                record: child, 
-                level 
-            })
-
-            this._expandNode(child, queue, level+1)
+            forEachNode(child, level)
+            this._expandNode(forEachNode, child, level+1)
         }
     }
 }
